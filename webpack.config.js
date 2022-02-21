@@ -4,7 +4,7 @@ const path = require('path')
 const src = path.resolve(__dirname, 'src')
 
 module.exports = {
-  entry: path.resolve(src,'WholePage.ts'),
+  entry: path.resolve(src,'FireworksDisplay.ts'),
   plugins: [
     new htmlWebpackPlugin({
       template: path.resolve(src, 'index.html')
