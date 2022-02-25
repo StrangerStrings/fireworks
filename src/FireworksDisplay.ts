@@ -2,7 +2,7 @@ import { css, customElement, html, internalProperty, LitElement, TemplateResult 
 	from "lit-element";
 import {defaultStyles} from './defaultStyles';
 import './components/FireworkA';
-import { Firework } from "./types";
+import { createFirework, CreateFirework1, Firework } from "./FireworkUtility";
 
 @customElement('fireworks-display')
 /**
@@ -31,7 +31,7 @@ export class FireworksDisplay extends LitElement {
 	 * it'll wipe the other array and start pushing fireworks to that instead. 
 	 * This way i can limit memory use without visual disturbance. */
 	fireworksBatch: 1|2 = 1;
-	maxFireworks = 20;
+	maxFireworks = 40;
 
 	@internalProperty() fireworks1: Firework[] = [];
 	@internalProperty() fireworks2: Firework[] = [];
@@ -39,15 +39,15 @@ export class FireworksDisplay extends LitElement {
 
 	connectedCallback(): void {
 		super.connectedCallback();
-  	window.addEventListener('keyup', this.FIRE.bind(this));
+  	window.addEventListener('keypress', this.FIRE.bind(this));
 	}
 
 
 	/** Main function: Creates new firework, adds it to the screen, manages batches */
-	FIRE() {
+	FIRE(ev: KeyboardEvent) {
 		const fireworksBatch = this.getCurrentBatch();
 					
-		const newFirework = this.createFirework();
+		const newFirework = createFirework(ev.key);
 		fireworksBatch.push(newFirework);
 
 		if (fireworksBatch.length >= this.maxFireworks) {
@@ -72,23 +72,15 @@ export class FireworksDisplay extends LitElement {
 			return this.fireworks2;
 		}
 	}
+	
 
-
-	createFirework(): Firework {
-		const x = Math.floor(Math.random()*101);
-		const y = Math.floor(Math.random()*101);
-		const maxSize = 200;
-		const color = 'purple';
-
-		return {x, y, maxSize, color};
-	}
-
-
-	renderFirework({x, y, maxSize,color}: Firework): TemplateResult {
-		return html`
-		<firework-a 
-			.deets=${{x, y, maxSize, color}}
-		></firework-a>`;
+	renderFirework(fire: Firework): TemplateResult {
+		switch (fire.type) {
+			case 'Firework1': 
+				return html`<firework-a .deets=${fire}></firework-a>`;
+			case 'Firework2':
+				return html`<firework-a .deets=${fire}></firework-a>`;
+		}
 	}
 
 	render() {
