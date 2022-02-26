@@ -105,6 +105,7 @@ export class FireworksDisplay extends LitElement {
  * _ _ _ _The Plan_ _ _ _
  * Create a multipart firework
  * Make some randomizer functions
+ * Make 'spores' a random amount between 2 and 5
  * Figure out a good system for chaining setTimeouts
  * Different expand/contract speed
  * maybe, move the createFirework methods to their component files

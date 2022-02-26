@@ -2,7 +2,7 @@ import { css, customElement, html, internalProperty, LitElement, property } from
 import { defaultStyles } from "../defaultStyles";
 import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
-import { Firework2 } from "../FireworkUtility";
+import { Firework2, Pos } from "../FireworkUtility";
 
 /**
  * A firework, that lives, and then dies
@@ -12,10 +12,12 @@ export class FireworkB extends LitElement{
 	static styles = [
 		defaultStyles,
 		css`
-			.firework {
+			* {
 				position: absolute;
-				border-radius: 50%;
 				transform: translate(-50%, 50%);
+				border-radius: 50%;
+			}
+			.rocket {
 				transition: 
 					height 1s ease-out, 
 					width 1s ease-out,
@@ -23,15 +25,14 @@ export class FireworkB extends LitElement{
 					left 1s ease-in,
 					backgroundColour 0.2s ease-out
 			}
+			/** Intermediate class so children can be 'absolute' */
 			.relative {
-				position:relative;
+				position: relative;
+				transform: initial;
 				left: 50%;
 				top: 50%;
 			}
 			.spore {
-				position: absolute;
-				transform: translate(-50%, 50%);
-				border-radius: 50%;
 				background: white;
 				transition:
 					bottom 1s ease-out,
@@ -47,52 +48,41 @@ export class FireworkB extends LitElement{
 	@internalProperty() size: number = 10;
 	@internalProperty() y: number = 0;
 	@internalProperty() x: number = 0;
-	
 	@internalProperty() color: string = 'yellow';
 	
-
-	@internalProperty() spore1left: number = 0;
-	@internalProperty() spore1bottom: number = 0;
-
-	@internalProperty() spore2left: number = 0;
-	@internalProperty() spore2bottom: number = 0;
-
-	@internalProperty() spore3left: number = 0;
-	@internalProperty() spore3bottom: number = 0;
-
+	@internalProperty() sporePositions: Pos[] = [];
 	@internalProperty() sporeSize: number = 0;
 
 
 	connectedCallback(): void {
 		super.connectedCallback();
+
 		this.x = this.config.x
+
+		this.sporePositions =	Array.from(
+			{ length: this.config.spores.length }, 
+			() => ({ x: 0, y: 0 })
+		);
 		
 		setTimeout(() => {
 			this.y = this.config.top;
 			this.x = this.x + this.config.drift
-		},30)
+		}, 30)
 
 		setTimeout(() => {
-			this.spore1left = this.config.spores[0].x
-			this.spore1bottom = this.config.spores[0].y
-
-			this.spore2left = this.config.spores[1].x
-			this.spore2bottom = this.config.spores[1].y
-
-			this.spore3left = this.config.spores[2].x
-			this.spore3bottom = this.config.spores[2].y
+			this.sporePositions = this.config.spores
+			this.sporeSize = 25
 			
-			this.sporeSize = 30
 			this.size = 0;
-		},930)
+		}, 930)
 
 		setTimeout(() => {
 			this.sporeSize = 0
-		},1500)
+		}, 1500)
 	}
 
 	render() {
-		const styles = {
+		const rocketStyle = {
 			width: `${this.size}px`, 
 			height: `${this.size}px`,
 			left: `${this.x}%`,
@@ -100,33 +90,21 @@ export class FireworkB extends LitElement{
 			background: `${this.color}`,
 		};
 
-		const spore1Style = {
-			left: `${this.spore1left}px`,
-			bottom: `${this.spore1bottom}px`,
+		const sporeStyles = this.sporePositions.map(pos => ({
+			left: `${pos.x}px`,
+			bottom: `${pos.y}px`,
 			height: `${this.sporeSize}px`,
 			width: `${this.sporeSize}px`
-		}
+		}))
 
-		const spore2Style = {
-			left: `${this.spore2left}px`,
-			bottom: `${this.spore2bottom}px`,
-			height: `${this.sporeSize}px`,
-			width: `${this.sporeSize}px`
-		}
-
-		const spore3Style = {
-			left: `${this.spore3left}px`,
-			bottom: `${this.spore3bottom}px`,
-			height: `${this.sporeSize}px`,
-			width: `${this.sporeSize}px`
-		}
+		const spores = sporeStyles.map(sporeStyle => 
+			html`<div class="spore" style=${styleMap(sporeStyle)}></div>`
+		);
 
 		return html`
-			<div class="firework" style=${styleMap(styles)}>
+			<div class="rocket" style=${styleMap(rocketStyle)}>
 				<div class="relative">
-					<div class="spore" style=${styleMap(spore1Style)}></div>
-					<div class="spore" style=${styleMap(spore2Style)}></div>
-					<div class="spore" style=${styleMap(spore3Style)}></div>
+					${spores}
 				</div>
 			</div>
 		`;

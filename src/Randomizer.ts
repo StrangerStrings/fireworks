@@ -3,7 +3,8 @@ export const Random = (
   high: number,
   /** Optional property that adds a random +/- number to returned random number,
       making it more spread out but still concentrating possible values in the original range */
-  extraSpread?: number 
+  extraSpread?: number, 
+  interger?: boolean
 ): number => {
   const range = high - low;
 
@@ -14,10 +15,22 @@ export const Random = (
   if (extraSpread) {
     /** Random betwen -1 and 1 */
     const random = (Math.random() - 0.5) * 2;
-    console.log(random);
     const multiplied = random * extraSpread;
     shifted += multiplied;
   }
 
+  if (interger) {
+
+  }
+
   return parseFloat(shifted.toPrecision(3));
+}
+
+export const RandomInt = (
+  low: number,
+  high: number,
+  extraSpread?: number, 
+): number => {
+  const random = Random(low, high, extraSpread)
+  return Math.round(random);
 }
