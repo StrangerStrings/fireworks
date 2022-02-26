@@ -2,7 +2,8 @@ import { css, customElement, html, internalProperty, LitElement, TemplateResult 
 	from "lit-element";
 import {defaultStyles} from './defaultStyles';
 import './components/FireworkA';
-import { createFirework, CreateFirework1, Firework } from "./FireworkUtility";
+import './components/FireworkB';
+import { CreateFirework, Firework } from "./FireworkUtility";
 
 @customElement('fireworks-display')
 /**
@@ -31,7 +32,7 @@ export class FireworksDisplay extends LitElement {
 	 * it'll wipe the other array and start pushing fireworks to that instead. 
 	 * This way i can limit memory use without visual disturbance. */
 	fireworksBatch: 1|2 = 1;
-	maxFireworks = 40;
+	maxFireworks = 100;
 
 	@internalProperty() fireworks1: Firework[] = [];
 	@internalProperty() fireworks2: Firework[] = [];
@@ -45,9 +46,9 @@ export class FireworksDisplay extends LitElement {
 
 	/** Main function: Creates new firework, adds it to the screen, manages batches */
 	FIRE(ev: KeyboardEvent) {
+		const newFirework = CreateFirework(ev.key);
+		
 		const fireworksBatch = this.getCurrentBatch();
-					
-		const newFirework = createFirework(ev.key);
 		fireworksBatch.push(newFirework);
 
 		if (fireworksBatch.length >= this.maxFireworks) {
@@ -73,13 +74,14 @@ export class FireworksDisplay extends LitElement {
 		}
 	}
 	
+	
 
-	renderFirework(fire: Firework): TemplateResult {
-		switch (fire.type) {
+	renderFirework(firework: Firework): TemplateResult {
+		switch (firework.type) {
 			case 'Firework1': 
-				return html`<firework-a .deets=${fire}></firework-a>`;
+				return html`<firework-a .config=${firework}></firework-a>`;
 			case 'Firework2':
-				return html`<firework-a .deets=${fire}></firework-a>`;
+				return html`<firework-b .config=${firework}></firework-b>`;
 		}
 	}
 
@@ -95,3 +97,16 @@ export class FireworksDisplay extends LitElement {
 		`;
 	}
 }
+
+
+
+
+/**
+ * _ _ _ _The Plan_ _ _ _
+ * Create a multipart firework
+ * Make some randomizer functions
+ * Figure out a good system for chaining setTimeouts
+ * Different expand/contract speed
+ * maybe, move the createFirework methods to their component files
+ * think of different names for firework components and configs
+ */

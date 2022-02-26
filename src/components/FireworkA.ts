@@ -2,7 +2,7 @@ import { css, customElement, html, internalProperty, LitElement, property } from
 import { defaultStyles } from "../defaultStyles";
 import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
-import { Firework, Firework1 } from "../FireworkUtility";
+import { Firework1 } from "../FireworkUtility";
 
 /**
  * A firework, that lives, and then dies
@@ -27,29 +27,27 @@ export class FireworkA extends LitElement{
 		`
 	];
 
-	@property({type: Object}) deets: Firework1;
+	@property({type: Object}) config: Firework1;
 
 	@internalProperty() size: number = 10;
 	@internalProperty() y: number = 0;
-	@internalProperty() x: number = 0;
-	
+	@internalProperty() x: number;
 	@internalProperty() color: string = 'yellow';
 	
-
-
+	stage: number[] = []
 
 	connectedCallback(): void {
 		super.connectedCallback();
-		this.x = this.deets.x
+		this.x = this.config.x
 
 		setTimeout(() => {
-			this.y = this.deets.top;
-			this.x = this.x + this.deets.drift
-		},50)
+			this.y = this.config.top;
+			this.x = this.x + this.config.drift
+		},10)
 
 		setTimeout(() => {
-			this.color = this.deets.color
-			this.size = this.deets.maxSize
+			this.color = this.config.color
+			this.size = this.config.maxSize
 		},1050)
 
 		setTimeout(() => {
