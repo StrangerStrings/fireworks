@@ -1,6 +1,6 @@
 import { Random, RandomInt } from "./Randomizer"
 
-export type Firework = Firework1 | Firework2 | Firework3
+export type Firework = Firework1 | Firework2 | Firework3 | Firework4 | FireworkE;
 
 /** Creates the config for a certain firework depending on key pressed */
 export const CreateFirework = (key: string): Firework => {
@@ -9,10 +9,12 @@ export const CreateFirework = (key: string): Firework => {
 			return createFirework1()
 		case 'q': case 'w':
 			return createFirework2_rain()
-		case 'a': case 's':
+		case 'a': case 's': case 'd':
 			return createFirework3()
-		case 'd':
-			return createFirework3()
+		case 'c': case 'v': case 'b':
+			return createFirework4()
+		case 'g':
+			return createFireworkE()
 		default:
 			return createFirework2()
 		}
@@ -26,11 +28,16 @@ type FireworkBase = {
 	top: number;
 }
 const CreateFireworkBase = (
+	avgHeight: number = 72,
+	spread: number = 12
 	//add some basics params
 ): FireworkBase => {
 	const x = Random(3, 97);
 	const drift = Random(-7.5, 7.5);
-	const top = Random(60, 85, 15);
+
+	const low = avgHeight - spread/2
+	const high = avgHeight + spread/2
+	const top = Random(low, high, spread);
 
 	return {x, drift, top}
 }
@@ -74,7 +81,7 @@ export const createFirework2 = (): Firework2 => {
 	const drift = Random(-7.5, 7.5);
 	const top = Random(75, 95, 10);
 
-	const sporeSize = 25
+	const sporeSize = Random(20,30)
 	const numberOfSpores = RandomInt(3,5,1);
 	const spores =	Array.from({ length: numberOfSpores}, 
 		() => ({ x: Random(-100,100), y: Random(-100,100) })
@@ -86,14 +93,14 @@ export const createFirework2 = (): Firework2 => {
 export const createFirework2_rain = (): Firework2 => {
 	const type = 'Firework2';
 
-	const x = Random(0, 100);
+	const x = Random(3, 97);
 	const drift = Random(-5, 5);
 	const top = Random(75, 95, 10);
 
-	const sporeSize = 10
+	const sporeSize = 7
 	const numberOfSpores = RandomInt(8,20);
 	const spores =	Array.from({ length: numberOfSpores}, 
-		() => ({ x: Random(-100,100), y: Random(-250,-50) })
+		() => ({ x: Random(-200,200), y: Random(-130,-30) })
 	);
 
 	return {type, x, drift, top, sporeSize, spores};
@@ -119,4 +126,54 @@ export const createFirework3 = (
 	const maxSize = Random(baseMaxSize, baseMaxSize + 100);
 
 	return {type, ...base, maxSize, color};
+} 
+
+
+/** Fire blah does this */
+export type Firework4 = {
+	type: 'Firework4';
+	x: number;
+	sporeSize: number;
+	spores: Pos[];
+	color: string;
+}
+export const createFirework4 = (
+	color: string = '#78def2'
+): Firework4 => {
+	const type = 'Firework4';
+
+	const x = Random(3, 97);
+
+	const sporeSize = Random(10,15)
+	const numberOfSpores = RandomInt(20,30);
+	const spores =	Array.from(
+		{ length: numberOfSpores }, 
+		() => {
+			return { x: Random(-100,100), y: Random(50,250) }
+		}
+	);
+
+	return {type, x, sporeSize, spores, color};
+} 
+
+
+/** Fire blah does this */
+export type FireworkE = {
+	type: 'FireworkE';
+	x: number;
+	drift: number;
+	top: number;
+	flashSize: number;
+	color: string;
+}
+export const createFireworkE = (
+	color: string = '#be5afa'
+): FireworkE => {
+	const type = 'FireworkE';
+
+	const base = CreateFireworkBase()
+
+	const flashSize = Random(500,1000,300)
+
+	return {type, ...base, flashSize, color};
 } 

@@ -4,6 +4,8 @@ import {defaultStyles} from './defaultStyles';
 import './components/FireworkA';
 import './components/FireworkB';
 import './components/FireworkC';
+import './components/FireworkD';
+import './components/FireworkE';
 import { CreateFirework, Firework } from "./FireworkUtility";
 
 @customElement('fireworks-display')
@@ -33,7 +35,7 @@ export class FireworksDisplay extends LitElement {
 	 * it'll wipe the other array and start pushing fireworks to that instead. 
 	 * This way i can limit memory use without visual disturbance. */
 	fireworksBatch: 1|2 = 1;
-	maxFireworks = 100;
+	maxFireworks = 50;
 
 	@internalProperty() fireworks1: Firework[] = [];
 	@internalProperty() fireworks2: Firework[] = [];
@@ -85,6 +87,10 @@ export class FireworksDisplay extends LitElement {
 				return html`<firework-b .config=${firework}></firework-b>`;
 			case 'Firework3':
 				return html`<firework-c .config=${firework}></firework-c>`;
+			case 'Firework4':
+				return html`<firework-d .config=${firework}></firework-d>`;
+			case 'FireworkE':
+				return html`<firework-e .config=${firework}></firework-e>`;
 		}
 	}
 
