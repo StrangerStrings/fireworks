@@ -71,7 +71,7 @@ export class FireworkB extends LitElement{
 
 		setTimeout(() => {
 			this.sporePositions = this.config.spores
-			this.sporeSize = 25
+			this.sporeSize = this.config.sporeSize
 			
 			this.size = 0;
 		}, 930)
@@ -80,6 +80,7 @@ export class FireworkB extends LitElement{
 			this.sporeSize = 0
 		}, 1500)
 	}
+
 
 	render() {
 		const rocketStyle = {

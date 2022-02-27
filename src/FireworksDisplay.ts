@@ -3,6 +3,7 @@ import { css, customElement, html, internalProperty, LitElement, TemplateResult 
 import {defaultStyles} from './defaultStyles';
 import './components/FireworkA';
 import './components/FireworkB';
+import './components/FireworkC';
 import { CreateFirework, Firework } from "./FireworkUtility";
 
 @customElement('fireworks-display')
@@ -82,6 +83,8 @@ export class FireworksDisplay extends LitElement {
 				return html`<firework-a .config=${firework}></firework-a>`;
 			case 'Firework2':
 				return html`<firework-b .config=${firework}></firework-b>`;
+			case 'Firework3':
+				return html`<firework-c .config=${firework}></firework-c>`;
 		}
 	}
 
@@ -103,11 +106,10 @@ export class FireworksDisplay extends LitElement {
 
 /**
  * _ _ _ _The Plan_ _ _ _
- * Create a multipart firework
- * Make some randomizer functions
- * Make 'spores' a random amount between 2 and 5
- * Figure out a good system for chaining setTimeouts
+ * Make one with a blurred border that FLashes
  * Different expand/contract speed
+ * Play with opacity
+ * Figure out a good system for chaining setTimeouts
  * maybe, move the createFirework methods to their component files
  * think of different names for firework components and configs
  */
