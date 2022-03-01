@@ -1,22 +1,18 @@
 import { css, customElement, html, internalProperty, LitElement, property } from "lit-element";
-import { defaultStyles } from "../defaultStyles";
+import { defaultStyles, fireworkStyles } from "../defaultStyles";
 import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
-import { Firework2, Pos } from "../FireworkUtility";
+import { FireworkB, Pos } from "../FireworkUtility";
 
 /**
  * A firework, that lives, and then dies
  */
 @customElement("firework-b")
-export class FireworkB extends LitElement{
+export class FireworkBcmp extends LitElement{
 	static styles = [
 		defaultStyles,
+		fireworkStyles,
 		css`
-			* {
-				position: absolute;
-				transform: translate(-50%, 50%);
-				border-radius: 50%;
-			}
 			.rocket {
 				transition: 
 					height 1s ease-out, 
@@ -24,13 +20,6 @@ export class FireworkB extends LitElement{
 					bottom 1s ease-out,
 					left 1s ease-in,
 					backgroundColour 0.2s ease-out
-			}
-			/** Intermediate class so children can be 'absolute' */
-			.relative {
-				position: relative;
-				transform: initial;
-				left: 50%;
-				top: 50%;
 			}
 			.spore {
 				background: white;
@@ -43,7 +32,7 @@ export class FireworkB extends LitElement{
 		`
 	];
 
-	@property({type: Object}) config: Firework2;
+	@property({type: Object}) config: FireworkB;
 
 	@internalProperty() size: number = 10;
 	@internalProperty() y: number = 0;

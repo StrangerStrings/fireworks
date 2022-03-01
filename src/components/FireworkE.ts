@@ -28,14 +28,14 @@ export class FireworkEcmp extends LitElement{
 				bottom: 0;
 				background: white;
 				transition:
-					height 0.5s ease-in, 
-					width 0.5s ease-in,
+					height 0.7s ease-in, 
+					width 0.7s ease-in,
 					opacity 0.1s ease-out
 			}
-			.claz {
+			.slowFade {
 				transition:
-					height 0.5s ease-in, 
-					width 0.5s ease-in,
+					height 1s ease-in, 
+					width 1s ease-in,
 					opacity 1s ease-out
 			}
 		`
@@ -49,8 +49,9 @@ export class FireworkEcmp extends LitElement{
 	@internalProperty() color: string = 'yellow';
 
 	@internalProperty() flashOpacity: number = 0;
+	@internalProperty() flashSize: number = 0;
 
-	@internalProperty() claz: boolean = false;
+	@internalProperty() slowFade: boolean = false;
 
 	connectedCallback(): void {
 		super.connectedCallback();
@@ -59,6 +60,8 @@ export class FireworkEcmp extends LitElement{
 		this.color = 'white'
 		
 		this.color = this.config.color
+
+		this.flashSize = this.config.flashSize
 
 		setTimeout(() => {
 			this.y  = this.config.top
@@ -70,7 +73,10 @@ export class FireworkEcmp extends LitElement{
 		}, 1030)
 
 		setTimeout(() => {
-			this.claz = true
+		}, 1080)
+
+		setTimeout(() => {
+			this.slowFade = true
 			this.flashOpacity = 0
 		}, 1130)
 	
@@ -88,13 +94,13 @@ export class FireworkEcmp extends LitElement{
 
     const rocketClass = {
 			flash: true,
-      claz: this.claz
+      slowFade: this.slowFade
     }
 		
 		const flashStyle = {
 			opacity: `${this.flashOpacity}`,
-			height: `${this.config.flashSize}px`,
-			width: `${this.config.flashSize}px`
+			height: `${this.flashSize}px`,
+			width: `${this.flashSize}px`
 		}
 
 		return html`

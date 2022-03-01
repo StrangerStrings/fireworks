@@ -6,6 +6,7 @@ import './components/FireworkB';
 import './components/FireworkC';
 import './components/FireworkD';
 import './components/FireworkE';
+import './components/FireworkF';
 import { CreateFirework, Firework } from "./FireworkUtility";
 
 @customElement('fireworks-display')
@@ -25,6 +26,7 @@ export class FireworksDisplay extends LitElement {
 					rgba(2,40,105,1) 20%, 
 					rgba(0,0,0,1) 60%, 
 					rgba(0,0,0,1) 100%);
+				background: black;
 			}
 		`
 	];
@@ -81,16 +83,18 @@ export class FireworksDisplay extends LitElement {
 
 	renderFirework(firework: Firework): TemplateResult {
 		switch (firework.type) {
-			case 'Firework1': 
+			case 'FireworkA': 
 				return html`<firework-a .config=${firework}></firework-a>`;
-			case 'Firework2':
+			case 'FireworkB':
 				return html`<firework-b .config=${firework}></firework-b>`;
-			case 'Firework3':
+			case 'FireworkC':
 				return html`<firework-c .config=${firework}></firework-c>`;
-			case 'Firework4':
+			case 'FireworkD':
 				return html`<firework-d .config=${firework}></firework-d>`;
 			case 'FireworkE':
 				return html`<firework-e .config=${firework}></firework-e>`;
+			case 'FireworkF':
+				return html`<firework-f .config=${firework}></firework-f>`;
 		}
 	}
 
@@ -112,10 +116,11 @@ export class FireworksDisplay extends LitElement {
 
 /**
  * _ _ _ _The Plan_ _ _ _
- * Make one with a blurred border that FLashes
- * Different expand/contract speed
- * Play with opacity
+ * Make one with a bang then lots of separate flashes
+ * Add just a touch of size change to the flash one
+ * One with two layer, different opac/colour
+ * 
+ * Try changing transition: within styleMap
  * Figure out a good system for chaining setTimeouts
  * maybe, move the createFirework methods to their component files
- * think of different names for firework components and configs
  */
