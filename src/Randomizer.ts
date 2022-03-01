@@ -19,10 +19,6 @@ export const Random = (
     shifted += multiplied;
   }
 
-  if (interger) {
-
-  }
-
   return parseFloat(shifted.toPrecision(3));
 }
 
@@ -33,4 +29,13 @@ export const RandomInt = (
 ): number => {
   const random = Random(low, high, extraSpread)
   return Math.round(random);
+}
+
+/** Pick a random element from an array */
+export function RandomElement<T> (
+  array: T[]
+): T {
+  const l = array.length
+  const idx = RandomInt(0, l-1)
+  return array[idx]
 }

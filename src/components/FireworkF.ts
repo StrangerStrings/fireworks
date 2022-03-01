@@ -18,9 +18,6 @@ export class FireworkFcmp extends LitElement{
 				opacity: 0;
 			}
 
-			.flash {
-				animation: flash 0.5s forwards
-			}
 			@keyframes flash {
 				0% {
 					opacity: 0;
@@ -43,23 +40,25 @@ export class FireworkFcmp extends LitElement{
 
 	@property({type: Object}) config: FireworkF;
 
-	@internalProperty() y: number = 0;
-	@internalProperty() x: number = 0;
-	@internalProperty() color: string = 'blue';
+	@internalProperty() y: number;
+	@internalProperty() x: number;
+	@internalProperty() color: string;
 	
-	@internalProperty() size: number = 25;
+	@internalProperty() size: number;
 	@internalProperty() rocketSizetransition: number = 0;
 	
 	@internalProperty() sporePositions: Pos[] = [];
-	@internalProperty() sporeSize: number = 0;
+	@internalProperty() sporeSize: number;
 	
-	@internalProperty() sporeFlashes: boolean[] = [];
-	
+	@internalProperty() flash: boolean = false;
+	@internalProperty() timePerFlash: number;
+
 
 	connectedCallback(): void {
 		super.connectedCallback();
 
 		this.setStartingValues()
+
 		this.liftOff(30)
 
 		this.preExplodeContraction(730)
@@ -71,12 +70,16 @@ export class FireworkFcmp extends LitElement{
 
 
 	setStartingValues() {
+		this.color = 'blue'
+		this.size = 25
+		this.y = 0
 		this.x = this.config.x
 
 		this.sporePositions = this.config.spores
 		this.sporeSize = this.config.sporeSize
 		
-		this.sporeFlashes = Array(this.config.spores.length).fill(false)
+		const length = this.sporePositions.length
+		this.timePerFlash = 700/length
 	}
 
 	liftOff(timing: number) {
@@ -102,15 +105,7 @@ export class FireworkFcmp extends LitElement{
 
 	sparkle(timing: number) {
 		setTimeout(() => {
-			const length = this.sporePositions.length
-			const timePer = 1000/length
-	
-			this.sporePositions.forEach((_, idx) => {
-				setTimeout(() => {
-					this.sporeFlashes[idx] = true
-					this.sporeFlashes = [...this.sporeFlashes]
-				}, idx * timePer)
-			})
+			this.flash = true
 		}, timing)
 	}
 
@@ -133,22 +128,27 @@ export class FireworkFcmp extends LitElement{
 				height ${this.rocketSizetransition}s ease-out, 
 				width ${this.rocketSizetransition}s ease-out,
 				bottom 1.7s ease-out,
-				left 1.7s ease-in,
-				backgroundColour 0.2s ease-out`
+				left 1.7s ease-in`
 		};
 
-		const sporeStyles = this.sporePositions.map((pos, idx) => ({
-			left: `${pos.x}px`,
-			bottom: `${pos.y}px`,
-			height: `${this.sporeSize}px`,
-			width: `${this.sporeSize}px`
-		}))
 
-		const spores = sporeStyles.map((sporeStyle, idx) => {
-			const classes = {spore: true, flash: this.sporeFlashes[idx]}
-			return html`<div class=${classMap(classes)} style=${styleMap(sporeStyle)}></div>`
-		}
+		const sporeStyles = this.sporePositions.map((pos, idx) => {
+			const flash = this.flash ? 'flash' : 'no-animation'
+			const delay = idx * this.timePerFlash
+			const repeats = idx % 3 + 1
+			return {
+				left: `${pos.x}px`,
+				bottom: `${pos.y}px`,
+				height: `${this.sporeSize}px`,
+				width: `${this.sporeSize}px`,
+				animation: `${flash} 0.7s ${delay}ms ${repeats}`
+			}
+		});
+
+		const spores = sporeStyles.map(sporeStyle => 
+			html`<div class="spore" style=${styleMap(sporeStyle)}></div>`
 		);
+
 
 		return html`
 			<div class="rocket" style=${styleMap(rocketStyle)}>

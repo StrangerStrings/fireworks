@@ -1,4 +1,4 @@
-import { Random, RandomInt } from "./Randomizer"
+import { Random, RandomElement, RandomInt } from "./Randomizer"
 
 export type Firework = FireworkA | FireworkB | FireworkC 
 										  | FireworkD | FireworkE | FireworkF;
@@ -68,9 +68,11 @@ export const createFireworkA = (
 	const base = CreateFireworkBase()
 
 	const maxSize = Random(baseMaxSize, baseMaxSize + 100);
-
-	// const ran =	Array.from({ length: 100 }, () => RandomInt(3,5,1))
+	
+	// const array = [1,50,99]
+	// const ran =	Array.from({ length: 100 }, () => RandomElement(array))
 	// console.log(ran.sort(function (a, b) {  return a - b;  }));
+	
 	return {type, ...base, maxSize, color};
 } 
 
@@ -201,7 +203,7 @@ export const createFireworkF = (): FireworkF => {
 	const sporeSize = Random(15,25)
 	const numberOfSpores = RandomInt(50,150);
 	const spores =	Array.from({ length: numberOfSpores}, 
-		() => ({ x: Random(-100,100,100), y: Random(-100,100,30) })
+		() => ({ x: Random(-150,150,100), y: Random(-100,100,30) })
 	);
 
 	return {type, ...base, sporeSize, spores};
