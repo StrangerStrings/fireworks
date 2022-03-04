@@ -7,6 +7,8 @@ import './components/FireworkC';
 import './components/FireworkD';
 import './components/FireworkE';
 import './components/FireworkF';
+import './components/FireworkG';
+import './components/FireworkH';
 import { CreateFirework, Firework } from "./FireworkUtility";
 
 @customElement('fireworks-display')
@@ -79,7 +81,6 @@ export class FireworksDisplay extends LitElement {
 		}
 	}
 	
-	
 
 	renderFirework(firework: Firework): TemplateResult {
 		switch (firework.type) {
@@ -95,6 +96,10 @@ export class FireworksDisplay extends LitElement {
 				return html`<firework-e .config=${firework}></firework-e>`;
 			case 'FireworkF':
 				return html`<firework-f .config=${firework}></firework-f>`;
+			case 'FireworkG':
+				return html`<firework-g .config=${firework}></firework-g>`;
+			case 'FireworkH':
+				return html`<firework-h .config=${firework}></firework-h>`;
 		}
 	}
 

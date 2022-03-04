@@ -2,7 +2,8 @@ import { css, customElement, html, internalProperty, LitElement, property } from
 import { defaultStyles, fireworkStyles } from "../defaultStyles";
 import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
-import { FireworkF, Pos } from "../FireworkUtility";
+import { CreateFireworkBase, Pos } from "../FireworkUtility";
+import { Random, RandomInt } from "../Randomizer";
 
 /**
  * A firework, that lives, and then dies
@@ -13,7 +14,7 @@ export class FireworkFcmp extends LitElement{
 		defaultStyles,
 		fireworkStyles,
 		css`
-			.spore {
+			.star {
 				background: white;
 				opacity: 0;
 			}
@@ -47,8 +48,8 @@ export class FireworkFcmp extends LitElement{
 	@internalProperty() size: number;
 	@internalProperty() rocketSizetransition: number = 0;
 	
-	@internalProperty() sporePositions: Pos[] = [];
-	@internalProperty() sporeSize: number;
+	@internalProperty() starPositions: Pos[] = [];
+	@internalProperty() starSize: number;
 	
 	@internalProperty() flash: boolean = false;
 	@internalProperty() timePerFlash: number;
@@ -57,7 +58,7 @@ export class FireworkFcmp extends LitElement{
 	connectedCallback(): void {
 		super.connectedCallback();
 
-		this.setStartingValues()
+		this.setupValues()
 
 		this.liftOff(30)
 
@@ -69,16 +70,16 @@ export class FireworkFcmp extends LitElement{
 	}
 
 
-	setStartingValues() {
+	setupValues() {
 		this.color = 'blue'
 		this.size = 25
 		this.y = 0
 		this.x = this.config.x
 
-		this.sporePositions = this.config.spores
-		this.sporeSize = this.config.sporeSize
+		this.starPositions = this.config.stars
+		this.starSize = this.config.starSize
 		
-		const length = this.sporePositions.length
+		const length = this.starPositions.length
 		this.timePerFlash = 700/length
 	}
 
@@ -132,30 +133,54 @@ export class FireworkFcmp extends LitElement{
 		};
 
 
-		const sporeStyles = this.sporePositions.map((pos, idx) => {
+		const starStyles = this.starPositions.map((pos, idx) => {
 			const flash = this.flash ? 'flash' : 'no-animation'
 			const delay = idx * this.timePerFlash
 			const repeats = idx % 3 + 1
 			return {
 				left: `${pos.x}px`,
 				bottom: `${pos.y}px`,
-				height: `${this.sporeSize}px`,
-				width: `${this.sporeSize}px`,
+				height: `${this.starSize}px`,
+				width: `${this.starSize}px`,
 				animation: `${flash} 0.7s ${delay}ms ${repeats}`
 			}
 		});
 
-		const spores = sporeStyles.map(sporeStyle => 
-			html`<div class="spore" style=${styleMap(sporeStyle)}></div>`
+		const stars = starStyles.map(starStyle => 
+			html`<div class="star" style=${styleMap(starStyle)}></div>`
 		);
 
 
 		return html`
 			<div class="rocket" style=${styleMap(rocketStyle)}>
 				<div class="relative">
-					${spores}
+					${stars}
 				</div>
 			</div>
 		`;
 	}
 }
+
+
+/** Rocket Firework that releases series of stars that sparkle and fizz one by one */
+export type FireworkF = {
+	type: 'FireworkF';
+	x: number;
+	drift: number;
+	top: number;
+	starSize: number;
+	stars: Pos[]
+}
+export const createFireworkF = (): FireworkF => {
+	const type = 'FireworkF';
+
+	const base = CreateFireworkBase(65, 20)
+
+	const starSize = Random(15,25)
+	const numberOfStars = RandomInt(50,150);
+	const stars =	Array.from({ length: numberOfStars}, 
+		() => ({ x: Random(-150,150,100), y: Random(-100,100,30) })
+	);
+
+	return {type, ...base, starSize, stars};
+} 

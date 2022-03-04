@@ -3,8 +3,7 @@ export const Random = (
   high: number,
   /** Optional property that adds a random +/- number to returned random number,
       making it more spread out but still concentrating possible values in the original range */
-  extraSpread?: number, 
-  interger?: boolean
+  extraSpread?: number
 ): number => {
   const range = high - low;
 

@@ -2,7 +2,8 @@ import { css, customElement, html, internalProperty, LitElement, property } from
 import { defaultStyles, fireworkStyles } from "../defaultStyles";
 import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
-import { FireworkE, Pos } from "../FireworkUtility";
+import { CreateFireworkBase, Pos } from "../FireworkUtility";
+import { Random } from "../Randomizer";
 
 const baz = 'ease-out'
 
@@ -17,69 +18,70 @@ export class FireworkEcmp extends LitElement{
 		css`
 			.rocket {
 				transition: 
-					height 0.5s ease-out, 
-					width 0.5s ease-out,
+					left 1s ease-in,
 					bottom 1s ease-out,
-					left 1s ease-in
+					width 0.5s ease-out,
+					height 0.5s ease-out 
 			}
 
 			.flash {
-				left: 0;
-				bottom: 0;
 				background: white;
-				transition:
-					height 0.7s ease-in, 
-					width 0.7s ease-in,
-					opacity 0.1s ease-out
-			}
-			.slowFade {
-				transition:
-					height 1s ease-in, 
-					width 1s ease-in,
-					opacity 1s ease-out
 			}
 		`
 	];
 
 	@property({type: Object}) config: FireworkE;
 
-	@internalProperty() size: number = 10;
-	@internalProperty() y: number = 0;
 	@internalProperty() x: number;
-	@internalProperty() color: string = 'yellow';
+	@internalProperty() y: number;
+	@internalProperty() size: number;
+	@internalProperty() color: string;
 
-	@internalProperty() flashOpacity: number = 0;
-	@internalProperty() flashSize: number = 0;
-
-	@internalProperty() slowFade: boolean = false;
+	@internalProperty() flashSize: number;
+	@internalProperty() flashOpacity: number;
+	@internalProperty() opacityTransition: number;
 
 	connectedCallback(): void {
 		super.connectedCallback();
 
+		this.setupValues()
+		this.liftOff(20)
+		this.explode(1020)
+		this.fadeOut(1120)
+	}
+
+
+	setupValues() {
 		this.x = this.config.x
-		this.color = 'white'
-		
+		this.y =  0;
+		this.size =  10;
 		this.color = this.config.color
 
-		this.flashSize = this.config.flashSize
+		this.flashOpacity = 0
+	}
 
+	liftOff(timing: number) {
 		setTimeout(() => {
-			this.y  = this.config.top
-		}, 30)
+			this.y = this.config.top;
+			this.x = this.x + this.config.drift
+		}, timing)
+	}
 
+	explode(timing: number) {
 		setTimeout(() => {
 			this.size = 0
+			
+			this.flashSize = this.config.flashSize
+			this.opacityTransition = 0.1
 			this.flashOpacity = 0.3
-		}, 1030)
+		}, timing)
+	}
 
+	fadeOut(timing: number) {
 		setTimeout(() => {
-		}, 1080)
-
-		setTimeout(() => {
-			this.slowFade = true
+			this.opacityTransition = 1
 			this.flashOpacity = 0
-		}, 1130)
-	
+		}, timing)
 	}
 
 
@@ -91,24 +93,45 @@ export class FireworkEcmp extends LitElement{
 			height: `${this.size}px`,
 			background: `${this.color}`
 		};
-
-    const rocketClass = {
-			flash: true,
-      slowFade: this.slowFade
-    }
 		
 		const flashStyle = {
 			opacity: `${this.flashOpacity}`,
 			height: `${this.flashSize}px`,
-			width: `${this.flashSize}px`
+			width: `${this.flashSize}px`,
+			transition: `
+				opacity ${this.opacityTransition}s ease-out	
+			`
 		}
 
 		return html`
 			<div class="rocket" style=${styleMap(rocketStyle)}>
 				<div class="relative">
-					<div class=${classMap(rocketClass)} style=${styleMap(flashStyle)}></div>
+					<div class="flash" style=${styleMap(flashStyle)}></div>
 				</div>
 			</div>
 		`;
 	}
 }
+
+
+/** Firework that flashes quickly and brightly then fades*/
+export type FireworkE = {
+	type: 'FireworkE';
+	x: number;
+	drift: number;
+	top: number;
+	flashSize: number;
+	color: string;
+}
+export const createFireworkE = (
+	color: string = '#be5afa'
+): FireworkE => {
+	const type = 'FireworkE';
+
+	const base = CreateFireworkBase(90, 15, false)
+
+	const flashSize = Random(500,1000,300)
+
+	return {type, ...base, flashSize, color};
+}
+ 

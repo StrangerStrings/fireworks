@@ -2,7 +2,8 @@ import { css, customElement, html, internalProperty, LitElement, property } from
 import { defaultStyles, fireworkStyles } from "../defaultStyles";
 import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
-import { FireworkB, Pos } from "../FireworkUtility";
+import { CreateFireworkBase, Pos } from "../FireworkUtility";
+import { Random, RandomInt } from "../Randomizer";
 
 /**
  * A firework, that lives, and then dies
@@ -15,88 +16,149 @@ export class FireworkBcmp extends LitElement{
 		css`
 			.rocket {
 				transition: 
-					height 1s ease-out, 
-					width 1s ease-out,
-					bottom 1s ease-out,
 					left 1s ease-in,
+					bottom 1s ease-out,
+					width 1s ease-out,
+					height 1s ease-out, 
 					backgroundColour 0.2s ease-out
 			}
-			.spore {
-				background: white;
+			.star {
 				transition:
-					bottom 1s ease-out,
 					left 1s ease-out,
-					height 0.5s ease-in, 
-					width 0.5s ease-in
+					bottom 1s ease-out,
+					width 0.5s ease-in,
+					height 0.5s ease-in 
 			}
 		`
 	];
 
 	@property({type: Object}) config: FireworkB;
 
-	@internalProperty() size: number = 10;
-	@internalProperty() y: number = 0;
-	@internalProperty() x: number = 0;
-	@internalProperty() color: string = 'yellow';
+	@internalProperty() x: number;
+	@internalProperty() y: number;
+	@internalProperty() size: number;
+	@internalProperty() rocketColor: string;
 	
-	@internalProperty() sporePositions: Pos[] = [];
-	@internalProperty() sporeSize: number = 0;
+	@internalProperty() stars: Pos[] = [];
+	@internalProperty() starSize: number = 0;
+	@internalProperty() starColor: string;
 
 
 	connectedCallback(): void {
 		super.connectedCallback();
 
-		this.x = this.config.x
+		this.setupValues()
+		this.liftOff(20)
+		this.explode(920)
+		this.disappear(1500)
+	}
 
-		this.sporePositions =	Array.from(
-			{ length: this.config.spores.length }, 
+	setupValues() {
+		this.x = this.config.x
+		this.y =  0;
+		this.size =  10;
+		this.rocketColor =  'yellow';
+
+		this.starColor = this.config.color
+		this.stars =	Array.from(
+			{ length: this.config.stars.length }, 
 			() => ({ x: 0, y: 0 })
 		);
-		
+	}
+
+	liftOff(timing: number) {
 		setTimeout(() => {
 			this.y = this.config.top;
 			this.x = this.x + this.config.drift
-		}, 30)
+		}, timing)
+	}
 
+	explode(timing: number) {
 		setTimeout(() => {
-			this.sporePositions = this.config.spores
-			this.sporeSize = this.config.sporeSize
+			this.stars = this.config.stars
+			this.starSize = this.config.starSize
 			
 			this.size = 0;
-		}, 930)
+		}, timing)
+	}
 
+	disappear(timing: number) {
 		setTimeout(() => {
-			this.sporeSize = 0
-		}, 1500)
+			this.starSize = 0
+		}, timing)
 	}
 
 
 	render() {
 		const rocketStyle = {
-			width: `${this.size}px`, 
-			height: `${this.size}px`,
 			left: `${this.x}%`,
 			bottom: `${this.y}%`,
-			background: `${this.color}`,
+			width: `${this.size}px`, 
+			height: `${this.size}px`,
+			background: `${this.rocketColor}`
 		};
 
-		const sporeStyles = this.sporePositions.map(pos => ({
+		const starStyles = this.stars.map(pos => ({
 			left: `${pos.x}px`,
 			bottom: `${pos.y}px`,
-			height: `${this.sporeSize}px`,
-			width: `${this.sporeSize}px`
+			width: `${this.starSize}px`,
+			height: `${this.starSize}px`,
+			background: `${this.starColor}`
 		}))
 
-		const spores = sporeStyles.map(sporeStyle => 
-			html`<div class="spore" style=${styleMap(sporeStyle)}></div>`
+		const stars = starStyles.map(starStyle => 
+			html`<div class="star" style=${styleMap(starStyle)}></div>`
 		);
 
 		return html`
 			<div class="rocket" style=${styleMap(rocketStyle)}>
 				<div class="relative">
-					${spores}
+					${stars}
 				</div>
 			</div>
 		`;
 	}
 }
+
+/** Rocket firework that emitts a shower of stars  */
+export type FireworkB = {
+	type: 'FireworkB';
+	x: number;
+	drift: number;
+	top: number;
+	color: string;
+	starSize: number;
+	stars: Pos[];
+}
+export const createFireworkB = (
+	color: string = 'white'
+): FireworkB => {
+	const type = 'FireworkB';
+
+	const base = CreateFireworkBase(85, 10)
+
+	const starSize = Random(20,30)
+	const numberOfStars = RandomInt(3,5,1);
+	const stars =	Array.from({ length: numberOfStars}, 
+		() => ({ x: Random(-100,100), y: Random(-100,100) })
+	);
+
+	return {type, ...base, color, starSize, stars};
+} 
+
+export const createFireworkB_rain = (
+	color: string = 'whitesmoke'
+): FireworkB => {
+	const type = 'FireworkB';
+
+	const base = CreateFireworkBase(93, 10)
+
+	const starSize = 7
+	const numberOfStars = RandomInt(8,20);
+	const stars =	Array.from(
+		{ length: numberOfStars }, 
+		() => ({ x: Random(-200,200), y: Random(-130,-30) })
+	);
+
+	return {type, ...base, color, starSize, stars};
+} 

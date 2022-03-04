@@ -24,4 +24,8 @@ export const fireworkStyles = css`
     left: 50%;
     top: 50%;
   }
+  .relative * {
+    left: 0;
+    bottom: 0;
+  }
 `;
